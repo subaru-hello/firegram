@@ -8,5 +8,20 @@ const useStorage = (file) => {
 
     useEffect(()=>{
 
-    },[file])
+        //references
+        const storageRef = projectStorage.ref(file.name);
+        storageRef.put(file).on('state_changed',(snap) =>{
+            let percentaage =(snap.bytesTransferred / snap.totalPytes)*100//100の大きさでアップロードされる
+            setProgress(percentage);
+        },(err) => {
+            setError(err)
+        },async() =>{
+            const url = await storageRef.getDownloadURL();
+            setUrl(url);
+        })
+
+    },[file]);
+return{progress, url, error}
 }
+
+export default useStorage;
